@@ -2,51 +2,21 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
-	"strconv"
 	"strings"
+
+	"github.com/weizhang9/advent-of-code-2019/utils"
 )
 
 func main() {
 	fname := "./input.txt"
-	b, err := getFileContent(fname)
-	checkErr(err, "Reading file error")
+	b := utils.GetFileContent(fname)
 
 	input := strings.Split(string(b), ",")
-	nums1 := stringToIntSlice(input)
-	nums2 := stringToIntSlice(input)
+	nums1 := utils.StringToIntSlice(input)
+	nums2 := utils.StringToIntSlice(input)
 
-	getResultFromParams(nums1, 12, 2)
-
+	getResultFromParams(nums1, 0, 0)
 	getParamsFromResult(nums2, 19690720)
-
-}
-
-func checkErr(e error, info string) {
-	if e != nil {
-		log.Fatalln(info, e)
-	}
-}
-
-func getFileContent(fname string) ([]byte, error) {
-	return ioutil.ReadFile(fname)
-}
-
-func stringToIntSlice(s []string) []int {
-	ints := make([]int, 0, len(s))
-
-	for _, v := range s {
-		if len(v) == 0 {
-			continue
-		}
-
-		i, err := strconv.Atoi(v)
-		checkErr(err, "Convert string slice to int slice error")
-		ints = append(ints, i)
-	}
-
-	return ints
 }
 
 func getResultFromParams(nums []int, param1 int, param2 int) {
