@@ -47,3 +47,18 @@ func StringToIntSlice(s []string) []int {
 
 	return ints
 }
+
+// UniqueInts takes a slice of ints and eliminates the duplicates
+func UniqueInts(slice []int) []int {
+	u := make([]int, 0, len(slice))
+	m := make(map[int]bool)
+
+	for _, val := range slice {
+		if _, ok := m[val]; !ok {
+			m[val] = true
+			u = append(u, val)
+		}
+	}
+
+	return u
+}

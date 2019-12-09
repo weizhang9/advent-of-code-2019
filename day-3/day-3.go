@@ -20,34 +20,35 @@ func main() {
 	a := getFootsteps(wireA)
 	b := getFootsteps(wireB)
 
-	crossings := make([]axis, 0)
+	crossingsA1, crossingsB1 := getCrossings(a, b)
+	crossingsA1 = append(crossingsA1, crossingsB1...)
 
-	for _, v := range a {
-		if contains(b, v) {
-			crossings = append(crossings, v)
-		}
-	}
+	crossingsA2, crossingsB2 := getCrossings(a, b)
 
-	fmt.Println("Day 3 Part One - Manhattan Distance is:", getManhattanDistance(crossings))
+	fmt.Println("Day 3 Part One - Manhattan Distance is:", getManhattanDistance(crossingsA1))
+	fmt.Println("Day 3 Part Two - Lowest combined step is:", getLowestCombinedSteps(crossingsA2, crossingsB2))
 
 }
 
 type axis struct {
 	x int
 	y int
+	steps int
 }
 
 func move(coordinates *axis, direction string, steps int) *axis {
 	switch direction {
 	case "L":
-		coordinates.x --
+		coordinates.x--
 	case "R":
-		coordinates.x ++
+		coordinates.x++
 	case "D":
-		coordinates.y --
+		coordinates.y--
 	case "U":
-		coordinates.y ++
+		coordinates.y++
 	}
+
+	coordinates.steps++
 
 	return coordinates
 }
@@ -74,14 +75,14 @@ func getFootsteps(wireInstructions []string) []axis {
 	return wireTrace
 }
 
-func contains(comparingSet []axis, comparedItem axis) bool {
+func contains(comparingSet []axis, comparedItem axis) axis {
 	for _, v := range comparingSet {
-		if v == comparedItem {
-			return true
+		if v.x == comparedItem.x && v.y == comparedItem.y {
+			return v
 		}
 	}
 
-	return false
+	return *new(axis)
 }
 
 func getManhattanDistance(crossings []axis) int {
@@ -93,4 +94,32 @@ func getManhattanDistance(crossings []axis) int {
 	sort.Ints(distances)
 
 	return distances[0]
+}
+
+func getCrossings(a, b []axis) (crossingsA, crossingsB []axis){
+	crossingsA = make([]axis, 0)
+	crossingsB = make([]axis, 0)
+
+	for _, v := range a {
+		bv := contains(b, v) 
+		if bv != (axis{}) {
+			crossingsA = append(crossingsA, v)
+			crossingsB = append(crossingsB, bv)
+		}
+	}
+	return;
+}
+
+func getLowestCombinedSteps(a, b []axis) int {
+	steps := make([]int, 0)
+	for i := 0; i < len(a); i++ {
+		if a[i].x == b[i].x && a[i].y == b[i].y {
+			steps = append(steps, a[i].steps + b[i].steps)
+			steps = utils.UniqueInts(steps)
+		}
+		
+	}
+	sort.Ints(steps)
+
+	return steps[0]
 }
